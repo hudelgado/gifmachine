@@ -1,0 +1,45 @@
+version: '3.7'
+services:
+  web:
+    build:
+      context: .
+      args:
+        - RACK_ENV=${RACK_ENV:-development}
+        - GIFMACHINE_PASSWORD=${GIFMACHINE_PASSWORD:-password123}
+    env_file:
+      - .env
+    restart: ${DOCKER_RESTART_POLICY:-unless-stopped}
+    stop_grace_period: 3s
+    volumes:
+      - ${DOCKER_WEB_VOLUME:-./public:/app/public}
+    ports:
+      - ${DOCKER_WEB_PORT_FORWARD:-127.0.0.1:4567}:4567
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4567"]
+      interval: 60s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: false
+
+  db:
+    image: docker.io/postgres:14.4
+    user: postgres
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    restart: ${DOCKER_RESTART_POLICY:-unless-stopped}
+    stop_grace_period: 3s
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+
+volumes:
+  postgres: {}

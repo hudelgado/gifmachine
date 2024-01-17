@@ -27,18 +27,13 @@ WebSockets?
 -----------
 ![websockets are magic](info/gifmachine-2.gif)
 
-## Setting up locally
+## Setting up locally with docker compose
 
-1. Get [RVM](http://rvm.io/rvm/install)
-2. Using RVM, install Ruby 2.6.5 `rvm install 2.6.5`
-3. Run `bundle install`
-4. Get Postgres 9.6 or newer
-5. Create a database locally called `gifmachine` (you can run: `bundle exec rake db:create`)
-6. Set your RACK_ENV (e.g. `export RACK_ENV='development'`)
-7. `bundle exec rake db:migrate` to load the database schema into the database
-8. Set an API password with `export GIFMACHINE_PASSWORD=foo`
-9. Run `ruby app.rb` to start the server
-10. Browse to `http://localhost:4567`
+1. Ensure docker is available in you system.
+2. Copy local environment file `sample.env` to `.env` and adjust it's settings: `cp sample.env .env``
+3. Run `docker compose up`
+4. In a different terminal initialize the database by running `docker compose exec web sh -c "bundle exec rake db:create; bundle exec rake db:migrate"`
+5. Browse to `http://localhost:4567`
 
 ## Posting Gifs
 
