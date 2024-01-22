@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-5)
+      - echo Logging in to Amazon ECR....
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPO_URL
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build --build-arg RAILS_ENV="production" -t $IMAGE_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_NAME:$IMAGE_TAG $REPO_URL:$IMAGE_TAG
+      - docker tag $IMAGE_NAME:$IMAGE_TAG $REPO_URL:latest
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo pushing to repo
+      - docker push $REPO_URL:latest
+      - docker push $REPO_URL:$IMAGE_TAG
+      - echo Writing image definitions file…
+      - printf '[{"name":"gifmachine-rails","imageUri":"%s"}]' $REPO_URL:$IMAGE_TAG > imagedefinitions.json
+      - aws ecs run-task --launch-type FARGATE --cluster $CLUSTER_NAME --task-definition gifmachine_db_migrate --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID],securityGroups=[$SECURITY_GROUP_IDS]}"
+artifacts:
+ files: imagedefinitions.json

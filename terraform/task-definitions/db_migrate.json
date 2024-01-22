@@ -1,0 +1,35 @@
+[
+    {
+        "name": "db-migrate",
+        "image": "${image}",
+        "command": [
+            "bundle",
+            "exec",
+            "rake",
+            "db:migrate"
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-region": "eu-west-1",
+                "awslogs-group": "gifmachine_db_migrate",
+                "awslogs-stream-prefix": "ecs"
+            }
+        },
+        "memory": 300,
+        "environment": [
+            {
+                "name": "RAILS_ENV",
+                "value": "production"
+            },
+            {
+                "name": "DATABASE_URL",
+                "value": "${database_url}"
+            },
+            {
+                "name": "RAILS_LOG_TO_STDOUT",
+                "value": "true"
+            }
+        ]
+    }
+]

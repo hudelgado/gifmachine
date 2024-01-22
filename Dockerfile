@@ -2,12 +2,9 @@ FROM ruby:2.6.5
 
 ENV APP_ROOT /var/app
 
-ARG GIFMACHINE_PASSWORD="password123"
-ENV GIFMACHINE_PASSWORD $GIFMACHINE_PASSWORD
-
-ARG RACK_ENV="development"
-ENV RAILS_ENV $RACK_ENV
-ENV RACK_ENV $RACK_ENV
+ARG RAILS_ENV
+ENV RACK_ENV $RAILS_ENV
+ENV RAILS_SERVE_STATIC_FILES true
 
 RUN apt-get update -qq && \
     apt-get install -qq -y build-essential --no-install-recommends && \

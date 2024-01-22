@@ -43,11 +43,16 @@ Using `curl` you can post a gif and some text to register it in the `gifmachine`
 curl --data 'url=http://www.example.com/somegif.gif&who=thatAmazingPerson&meme_top=herp&meme_bottom=derp&secret=yourSuperSecretPasswordFromAppRb' 'http://yourGifMachineUrl/gif'
 ```
 
-## Configuring for Production
+## Production Architecture
 
+This solution uses ECS Fargate with AWS CodePipelines deployint to ECS.
+
+All of the steps are fully automatic on ECS by using the aws integration.
+
+## Configuring for Production
 To run in production, you will need the following:
 
-- Pass the environment variable `RACK_ENV=production`
-- You will want to setup a Postgres database, and then run `bundle exec rake db:create && bundle exec rake db:migrate` against it before running the app.
-- You will pass in an environment variable `DATABASE_URL` of the format `postgres://username:password@database-url:5432/database-name`
-- Lastly, you will also want to set a password for the API, via the environment variable `GIFMACHINE_PASSWORD`.
+- Update the `repository_name` variable in the terraform folder code, to ensure is pointing to the correct repository
+- Deploy the code and check the application loadbalancer url.
+- Give permissions to source code repository connection in aws codepipelines settings.
+- Open the application url in browser.

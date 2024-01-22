@@ -4,7 +4,7 @@ services:
     build:
       context: .
       args:
-        - RACK_ENV=${RACK_ENV:-development}
+        - RAILS_ENV=${RACK_ENV:-development}
         - GIFMACHINE_PASSWORD=${GIFMACHINE_PASSWORD:-password123}
     env_file:
       - .env

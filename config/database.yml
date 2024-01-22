@@ -1,5 +1,12 @@
-development:
+default: &default
   adapter: postgresql
   database: gifmachine
+  pool: 5
+
+development:
+  <<: *default
   host: db
   username: postgres
+
+production:
+  <<: *default
